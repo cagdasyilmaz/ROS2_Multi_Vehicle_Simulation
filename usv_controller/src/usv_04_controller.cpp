@@ -26,41 +26,45 @@
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 
+using namespace std::chrono_literals;
+
 class PublisherNode : public rclcpp::Node
 {
 public:
     PublisherNode()
     	: Node("usv_04_controller")
     {
-        publisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/box_bot4/cmd_vel", 10);
+        publisher_ = create_publisher<geometry_msgs::msg::Twist>("/box_bot4/cmd_vel", 10);
+        timer_ = create_wall_timer(50ms,
+        						  std::bind(&PublisherNode::timer_callback, this));
+    }
 
-        auto timer_callback =
-        [this]() -> void
-        {
-            auto message = std::make_unique<geometry_msgs::msg::Twist>();
-            message->linear.x  = 0.1;
-            message->linear.y  = 0.0;
-            message->linear.z  = 0.0;
-            message->angular.x = 0.0;
-            message->angular.y = 0.0;
-            message->angular.z = 0.0;
-            publisher_->publish(std::move(message));
-        };
-
-        // Publish once after 1 second
-        timer_ = this->create_wall_timer(std::chrono::seconds(1), timer_callback);
+    void timer_callback()
+    {
+    	message_.linear.x = 0.10;
+    	message_.linear.y  = 0.0;
+        message_.linear.z  = 0.0;
+    	message_.angular.x = 0.0;
+    	message_.angular.y = 0.0;
+    	message_.angular.z = 0.0;
+    	publisher_->publish(message_);
     }
 
 private:
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;
     rclcpp::TimerBase::SharedPtr timer_;
+    geometry_msgs::msg::Twist message_;
 };
 
 int main(int argc, char * argv[])
 {
     rclcpp::init(argc, argv);
+
     auto node = std::make_shared<PublisherNode>();
+
     rclcpp::spin(node);
+
     rclcpp::shutdown();
+
     return 0;
 }
