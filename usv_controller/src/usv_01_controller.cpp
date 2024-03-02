@@ -35,8 +35,7 @@ public:
     	: Node("usv_01_controller")
     {
         publisher_ = create_publisher<geometry_msgs::msg::Twist>("/box_bot1/cmd_vel", 10);
-        timer_ = create_wall_timer(50ms,
-        						  std::bind(&PublisherNode::timer_callback, this));
+        timer_ = create_wall_timer(50ms, std::bind(&PublisherNode::timer_callback, this));
     }
 
     void timer_callback()
