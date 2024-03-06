@@ -20,10 +20,12 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 
 set(dependencies
     rclcpp
     geometry_msgs
+    nav_msgs
 )
 
 add_executable(usv_01_controller src/usv_01_controller.cpp)
