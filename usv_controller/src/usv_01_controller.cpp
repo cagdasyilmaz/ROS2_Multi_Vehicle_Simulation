@@ -1,10 +1,11 @@
+#include "../include/subscriptions/odometry.hpp"
+
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 
-#include "../include/subscriptions/odometry.hpp"
-
 #include <memory>
+#include <vector>
 
 using namespace std::chrono_literals;
 using std::placeholders::_1;
@@ -53,14 +54,39 @@ int main(int argc, char * argv[])
 {
     rclcpp::init(argc, argv);
 
-    auto node_sub = std::make_shared<SubscriberNode>("usv_01_controller_sub", "/box_bot1/odom");
-    auto node_pub = std::make_shared<PublisherNode>("usv_01_controller_pub", node_sub, "/box_bot1/cmd_vel");
+    std::vector<std::shared_ptr<SubscriberNode>> fleet_info;
 
-    rclcpp::executors::SingleThreadedExecutor executor;
-    executor.add_node(node_sub);
-    executor.add_node(node_pub);
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_01_controller_sub", "/box_bot1/odom"));
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_02_controller_sub", "/box_bot2/odom"));
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_03_controller_sub", "/box_bot3/odom"));
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_04_controller_sub", "/box_bot4/odom"));
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_05_controller_sub", "/box_bot5/odom"));
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_06_controller_sub", "/box_bot6/odom"));
 
-    executor.spin();
+    auto node_pub = std::make_shared<PublisherNode>("usv_01_controller_pub", fleet_info[0], "/box_bot1/cmd_vel");
+
+    // Manually spinning nodes with a while loop
+    while (rclcpp::ok())
+    {
+
+    	for(auto vehicle_info : fleet_info)
+    	{
+    		rclcpp::spin_some(vehicle_info);
+    	}
+    	rclcpp::spin_some(node_pub);
+
+    	std::vector<Position> vehicle_positions;
+
+    	for(auto vehicle_info : fleet_info)
+    	{
+    		vehicle_positions.push_back(vehicle_info->get_position());
+    	}
+
+        printf("[Boat1] [x, y]: [%.2f, %.2f]\n", vehicle_positions[0].x, vehicle_positions[0].y);
+
+
+        std::this_thread::sleep_for(200ms); // Add a small delay to reduce CPU usage
+    }
 
     rclcpp::shutdown();
     return 0;
