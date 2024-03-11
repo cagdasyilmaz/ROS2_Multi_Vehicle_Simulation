@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /****************************************************************************
  * MIT License
  *
@@ -23,6 +24,8 @@
  *
  ****************************************************************************/
 
+=======
+>>>>>>> 0d5a5bc81ccbd42e5ae363f0fef6c230d54edc0c
 #include "../include/subscriptions/odometry.hpp"
 
 #include <rclcpp/rclcpp.hpp>
@@ -74,6 +77,7 @@ int main(int argc, char * argv[])
     rclcpp::init(argc, argv);
 
     std::vector<std::shared_ptr<SubscriberNode>> fleet_info;
+<<<<<<< HEAD
 
     fleet_info.push_back(std::make_shared<SubscriberNode>("usv_01_controller_sub", "/box_bot1/odom"));
     fleet_info.push_back(std::make_shared<SubscriberNode>("usv_02_controller_sub", "/box_bot2/odom"));
@@ -88,6 +92,22 @@ int main(int argc, char * argv[])
     while (rclcpp::ok())
     {
 
+=======
+
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_01_controller_sub", "/box_bot1/odom"));
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_02_controller_sub", "/box_bot2/odom"));
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_03_controller_sub", "/box_bot3/odom"));
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_04_controller_sub", "/box_bot4/odom"));
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_05_controller_sub", "/box_bot5/odom"));
+    fleet_info.push_back(std::make_shared<SubscriberNode>("usv_06_controller_sub", "/box_bot6/odom"));
+
+    auto node_pub = std::make_shared<PublisherNode>("usv_01_controller_pub", fleet_info[0], "/box_bot1/cmd_vel");
+
+    // Manually spinning nodes with a while loop
+    while (rclcpp::ok())
+    {
+
+>>>>>>> 0d5a5bc81ccbd42e5ae363f0fef6c230d54edc0c
     	for(auto vehicle_info : fleet_info)
     	{
     		rclcpp::spin_some(vehicle_info);
@@ -101,7 +121,12 @@ int main(int argc, char * argv[])
     		vehicle_positions.push_back(vehicle_info->get_position());
     	}
 
+<<<<<<< HEAD
         //printf("[Boat1] [x, y]: [%.2f, %.2f]\n", vehicle_positions[0].x, vehicle_positions[0].y);
+=======
+        printf("[Boat1] [x, y]: [%.2f, %.2f]\n", vehicle_positions[0].x, vehicle_positions[0].y);
+
+>>>>>>> 0d5a5bc81ccbd42e5ae363f0fef6c230d54edc0c
 
         std::this_thread::sleep_for(200ms); // Add a small delay to reduce CPU usage
     }
