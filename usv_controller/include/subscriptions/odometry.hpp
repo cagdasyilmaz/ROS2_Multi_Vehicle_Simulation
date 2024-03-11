@@ -52,8 +52,6 @@ public:
 
 	void subscriber_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
 	{
-		// Do something with the received odometry data (e.g., access pose, twist)
-
 		position.x = msg->pose.pose.position.x;
 		position.y = msg->pose.pose.position.y;
 	}
